@@ -45,6 +45,7 @@ class Device:
         self.jobscript_string = jobscript_string 
         self.execute = execute
         
+        
         if dir is not None:
             if (":" in dir):
                 self.ssh, self.wd = dir.split(":")
@@ -74,6 +75,7 @@ class Device:
         :rtype: int
         """
         
+        
         self.lmp_args["-in"] = lmp_script
         exec_list = self.get_exec_list(self.num_procs, self.lmp_exec, self.lmp_args, lmp_var)
        
@@ -94,7 +96,6 @@ class Device:
                 output = subprocess.check_output(["sbatch", f'{self.wd}/{self.jobscript_name}'])
             else: # Run on ssh 
                 output = subprocess.check_output(["ssh", self.ssh, f"cd {self.wd} && sbatch {self.jobscript_name}"])
-            
             job_id = int(re.findall("([0-9]+)", str(output))[0])
             print(f"Job submitted with job ID {job_id}")
             return job_id
@@ -243,6 +244,16 @@ class SlurmCPU(Device):
                               }
 
         self.slurm_args = {**default_slurm_args, **self.slurm_args}
+        
+        
+        #  if dir is not None:
+        #     if (":" in dir):
+        #         self.ssh, self.wd = dir.split(":")
+        #     else:
+        #         self.ssh = None
+        #         self.wd = dir
+        # else:
+        #     warnings.warn("Working directory is not defined!")
 
     def __str__(self):
         return "CPU (slurm)"
@@ -283,3 +294,5 @@ class SlurmGPU(Device):
 
     def __str__(self):
         return "GPU (slurm)"
+
+
