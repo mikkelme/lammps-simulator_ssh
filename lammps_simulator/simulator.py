@@ -55,8 +55,10 @@ class Simulator:
             if host is None:
                 os.makedirs(dir_)
             else:
-                res = subprocess.Popen(['ssh', host, 'mkdir -p', dir_], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                res = subprocess.Popen(['ssh', host, 'mkdir', dir_], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output, error = res.communicate()
+                if "No such file or directory" in str(error):
+                    res = subprocess.Popen(['ssh', host, 'mkdir -p', dir_], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 if "File exists" in str(error): 
                     raise FileExistsError
         except FileExistsError:
